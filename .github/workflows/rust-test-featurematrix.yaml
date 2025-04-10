@@ -35,18 +35,24 @@ jobs:
         with:
           submodules: "recursive"
       - uses: dtolnay/rust-toolchain@master
-        with: 
+        with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
       - uses: Swatinem/rust-cache@v2
       - name: Install cargo-all-features
         run: |
-            cargo install cargo-all-features
+          cargo install cargo-all-features
 
       - name: Show toolchain information
         working-directory: ${{ github.workspace }}
         run: |
           rustup toolchain list
           cargo --version
+
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          brew install docker
+          colima start
 
       - name: cargo-check all possible feature combinations
         run: |
@@ -55,11 +61,10 @@ jobs:
         run: |
           cargo test-all-features
 
-
   # Alternative to the full feature matrix tested in the step above - somewhat faster...
   # multi-os-nextest:
   #   runs-on: ${{ matrix.os }}
-  #   env: 
+  #   env:
   #     NEXTEST_EXPERIMENTAL_LIBTEST_JSON: 1
   #   strategy:
   #     matrix:
@@ -68,7 +73,7 @@ jobs:
   #   steps:
   #     - uses: actions/checkout@v4
   #     - uses: dtolnay/rust-toolchain@master
-  #       with: 
+  #       with:
   #         toolchain: ${{ env.RUST_TOOLCHAIN }}
   #     - uses: Swatinem/rust-cache@v2
   #     - uses: taiki-e/install-action@nextest
