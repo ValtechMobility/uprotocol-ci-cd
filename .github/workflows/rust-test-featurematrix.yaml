@@ -52,9 +52,20 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install podman
-          podman machine init
-          podman machine start
+          podman machine init --cpus 1 --memory 2048 --disk-size 10 --now --vmtype vz
+          # Wait for machine to be ready
+          timeout=0
+          echo "Waiting for Podman machine to be ready..."
+          while ! podman machine ssh true 2>/dev/null; do
+            if [ $timeout -gt 60 ]; then
+              echo "Podman machine failed to start within 60 seconds"
+              exit 1
+            fi
+            sleep 1
+            timeout=$((timeout + 1))
+          done
           ln -sf $(which podman) /usr/local/bin/docker
+          podman ps # verify it's working
 
       - name: cargo-check all possible feature combinations
         run: |
