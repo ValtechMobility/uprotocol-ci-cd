@@ -52,17 +52,19 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install --cask docker
-          open -a Docker
+          # Start Docker daemon in the background
+          /Applications/docker.app/Contents/MacOS/Docker --unattended &
           timeout=0
+          echo "Waiting for Docker to start..."
           while ! docker system info > /dev/null 2>&1; do
             if [ $timeout -gt 60 ]; then
               echo "Docker failed to start within 60 seconds"
               exit 1
             fi
-            echo "Waiting for Docker to start..."
             sleep 1
             timeout=$((timeout + 1))
           done
+          echo "Docker is running"
 
       - name: cargo-check all possible feature combinations
         run: |
