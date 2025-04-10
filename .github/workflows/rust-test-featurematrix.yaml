@@ -53,7 +53,9 @@ jobs:
         run: |
           brew install docker
           brew install colima
-          colima start
+          colima start --cpu 1 --memory 2 --disk 20 --arch aarch64 --vm-type vz
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+          docker ps # test if docker is working
 
       - name: cargo-check all possible feature combinations
         run: |
