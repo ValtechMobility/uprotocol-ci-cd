@@ -51,21 +51,16 @@ jobs:
       - name: Install and start Colima
         if: runner.os == 'macOS'
         run: |
-          brew install podman
-          podman machine init --cpus 1 --memory 2048 --disk-size 10 --now --vmtype vz
-          # Wait for machine to be ready
-          timeout=0
-          echo "Waiting for Podman machine to be ready..."
-          while ! podman machine ssh true 2>/dev/null; do
-            if [ $timeout -gt 60 ]; then
-              echo "Podman machine failed to start within 60 seconds"
-              exit 1
-            fi
-            sleep 1
-            timeout=$((timeout + 1))
-          done
-          ln -sf $(which podman) /usr/local/bin/docker
-          podman ps # verify it's working
+          brew install mosquitto
+          # Create a minimal config file
+          echo "listener 1883" | sudo tee /opt/homebrew/etc/mosquitto/mosquitto.conf
+          echo "allow_anonymous true" | sudo tee -a /opt/homebrew/etc/mosquitto/mosquitto.conf
+          # Start mosquitto in the background
+          /opt/homebrew/opt/mosquitto/sbin/mosquitto -c /opt/homebrew/etc/mosquitto/mosquitto.conf -d
+          # Wait a moment for the broker to start
+          sleep 2
+          # Verify the broker is running and listening
+          nc -z localhost 1883 || (echo "Mosquitto is not running" && exit 1)
 
       - name: cargo-check all possible feature combinations
         run: |
