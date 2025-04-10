@@ -31,10 +31,13 @@ jobs:
     env:
       CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS: allow
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: "recursive"
-    - run: rustup update stable && rustup default stable
-    - run: cargo update --verbose
-    - run: cargo build --verbose --all-features
-    - run: cargo test --verbose --all-features
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - uses: ValtechMobility/uprotocol-ci-cd/.github/actions/setup-mosquitto@main
+
+      - run: rustup update stable && rustup default stable
+      - run: cargo update --verbose
+      - run: cargo build --verbose --all-features
+      - run: cargo test --verbose --all-features

@@ -21,14 +21,14 @@ on:
   workflow_call:
     outputs:
       test_coverage_url:
-        description: 'URL of the test coverage artifact'
+        description: "URL of the test coverage artifact"
         value: ${{ jobs.coverage.outputs.test_coverage_url }}
-          
+
 env:
   RUST_TOOLCHAIN: ${{ vars.RUST_TOOLCHAIN || 'stable' }}
   RUSTFLAGS: -Dwarnings
   CARGO_TERM_COLOR: always
-          
+
 jobs:
   coverage:
     name: collect
@@ -41,11 +41,13 @@ jobs:
           submodules: "recursive"
 
       - uses: dtolnay/rust-toolchain@master
-        with: 
+        with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
       - name: Install cargo-tarpaulin
         uses: taiki-e/install-action@cargo-tarpaulin
       - uses: Swatinem/rust-cache@v2
+
+      - uses: ValtechMobility/uprotocol-ci-cd/.github/actions/setup-mosquitto@main
 
       - name: Run tests and report code coverage
         run: |
