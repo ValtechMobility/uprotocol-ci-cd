@@ -48,14 +48,21 @@ jobs:
           rustup toolchain list
           cargo --version
 
-      - name: Setup docker (missing on MacOS)
-        if: runner.os == 'macos'
+      - name: Install Docker on macOS
+        if: runner.os == 'macOS'
         run: |
-          brew install docker
-          brew install colima
-          colima start --cpu 1 --memory 2 --disk 20 --arch aarch64 --vm-type vz
-          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
-          docker ps # test if docker is working
+          brew install --cask docker
+          open -a Docker
+          timeout=0
+          while ! docker system info > /dev/null 2>&1; do
+            if [ $timeout -gt 60 ]; then
+              echo "Docker failed to start within 60 seconds"
+              exit 1
+            fi
+            echo "Waiting for Docker to start..."
+            sleep 1
+            timeout=$((timeout + 1))
+          done
 
       - name: cargo-check all possible feature combinations
         run: |
