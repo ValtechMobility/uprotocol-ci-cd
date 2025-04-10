@@ -4,10 +4,6 @@ description: "Installs and starts Mosquitto MQTT broker"
 runs:
   using: "composite"
   steps:
-    - name: Test
-      shell: bash
-      run: |
-        echo hello
     - name: Install and start Mosquitto on Ubuntu
       if: runner.os == 'Linux'
       shell: bash
