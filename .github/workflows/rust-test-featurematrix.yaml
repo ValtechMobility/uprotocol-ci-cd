@@ -42,7 +42,7 @@ jobs:
         run: |
           cargo install cargo-all-features
 
-      - uses: ValtechMobility/uprotocol-ci-cd/.github/actions/setup-mosquitto
+      - uses: ./.github/actions/setup-mosquitto
 
       - name: Show toolchain information
         working-directory: ${{ github.workspace }}
