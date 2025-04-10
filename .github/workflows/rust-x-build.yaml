@@ -60,19 +60,7 @@ jobs:
       # Using nextest because it's faster than built-in test
       - uses: taiki-e/install-action@nextest
 
-      - name: Debug Step 1
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Directory contents:"
-          ls -la
-
       - uses: ValtechMobility/uprotocol-ci-cd/.github/actions/setup-mosquitto@main
-
-      - name: Debug Step 2
-        run: |
-          echo "Action exists?"
-          ls -la .github/actions/setup-mosquitto || echo "Action not found"
 
       - name: Run cargo nextest
         run: |
