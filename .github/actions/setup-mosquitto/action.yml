@@ -1,0 +1,40 @@
+name: "Setup Mosquitto"
+description: "Installs and starts Mosquitto MQTT broker"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install and start Mosquitto on Ubuntu
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mosquitto
+        echo "listener 1883" | sudo tee /etc/mosquitto/conf.d/default.conf
+        echo "allow_anonymous true" | sudo tee -a /etc/mosquitto/conf.d/default.conf
+        sudo systemctl start mosquitto
+        sleep 2
+        nc -z localhost 1883 || (echo "Mosquitto is not running" && exit 1)
+
+    - name: Install and start Mosquitto on Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri "https://mosquitto.org/files/binary/win64/mosquitto-2.0.15-install-windows-x64.exe" -OutFile "mosquitto-installer.exe"
+        Start-Process -FilePath ".\mosquitto-installer.exe" -ArgumentList '/S' -Wait
+        echo "listener 1883" | Out-File -Encoding ASCII "C:\Program Files\mosquitto\mosquitto.conf"
+        echo "allow_anonymous true" | Add-Content -Encoding ASCII "C:\Program Files\mosquitto\mosquitto.conf"
+        Start-Service mosquitto
+        Start-Sleep -Seconds 2
+        Test-NetConnection -ComputerName localhost -Port 1883 -WarningAction SilentlyContinue
+
+    - name: Install and start Mosquitto on macOS
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        brew install mosquitto
+        echo "listener 1883" | sudo tee /opt/homebrew/etc/mosquitto/mosquitto.conf
+        echo "allow_anonymous true" | sudo tee -a /opt/homebrew/etc/mosquitto/mosquitto.conf
+        /opt/homebrew/opt/mosquitto/sbin/mosquitto -c /opt/homebrew/etc/mosquitto/mosquitto.conf -d
+        sleep 2
+        nc -z localhost 1883 || (echo "Mosquitto is not running" && exit 1)

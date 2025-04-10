@@ -21,7 +21,7 @@ on:
 env:
   RUST_TOOLCHAIN: ${{ vars.RUST_TOOLCHAIN || 'stable' }}
   RUSTFLAGS: -Dwarnings
-  CARGO_TERM_COLOR: always  
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
@@ -50,7 +50,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: "recursive"
-     
+
+      - uses: ./.github/actions/setup-mosquitto
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
@@ -59,7 +61,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       # Using nextest because it's faster than built-in test
       - uses: taiki-e/install-action@nextest
-     
+
       - name: Run cargo nextest
         run: |
           cargo nextest run --no-fail-fast --all-features
