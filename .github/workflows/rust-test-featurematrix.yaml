@@ -53,7 +53,7 @@ jobs:
         run: |
           brew install --cask docker
           # Start Docker daemon in the background
-          /Applications/docker.app/Contents/MacOS/Docker --unattended &
+          /Applications/Docker.app/Contents/MacOS/Docker --unattended &
           timeout=0
           echo "Waiting for Docker to start..."
           while ! docker system info > /dev/null 2>&1; do
