@@ -51,8 +51,6 @@ jobs:
         with:
           submodules: "recursive"
 
-      - uses: ValtechMobility/uprotocol-ci-cd/.github/actions/setup-mosquitto@main
-
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
@@ -61,6 +59,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       # Using nextest because it's faster than built-in test
       - uses: taiki-e/install-action@nextest
+
+      - uses: ValtechMobility/uprotocol-ci-cd/.github/actions/setup-mosquitto@main
 
       - name: Run cargo nextest
         run: |
