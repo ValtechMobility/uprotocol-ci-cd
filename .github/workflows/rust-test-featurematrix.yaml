@@ -49,6 +49,7 @@ jobs:
           cargo --version
 
       - name: Install and start Colima
+        if: runner.os == 'macOS'
         run: |
           brew install colima
           colima version
