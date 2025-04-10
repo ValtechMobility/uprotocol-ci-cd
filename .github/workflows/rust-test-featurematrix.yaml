@@ -52,6 +52,7 @@ jobs:
         if: runner.os == 'macos'
         run: |
           brew install docker
+          brew install colima
           colima start
 
       - name: cargo-check all possible feature combinations
