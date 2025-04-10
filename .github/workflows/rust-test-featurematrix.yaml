@@ -51,10 +51,10 @@ jobs:
       - name: Install and start Colima
         if: runner.os == 'macOS'
         run: |
-          brew install docker
-          brew install colima
-          brew install qemu
-          colima start --network-address --arch arm64 --vm-type=qemu
+          brew install podman
+          podman machine init
+          podman machine start
+          ln -sf $(which podman) /usr/local/bin/docker
 
       - name: cargo-check all possible feature combinations
         run: |
